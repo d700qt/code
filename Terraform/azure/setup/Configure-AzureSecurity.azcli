@@ -1,0 +1,15 @@
+# Taken from https://docs.microsoft.com/en-us/azure/virtual-machines/linux/terraform-install-configure
+az login
+
+az account show --query "{subscriptionId:id, tenantId:tenantId}"
+
+# Set the subscription that you want to use for this session.
+# az account set --subscription="1234567890"
+
+# Next, create separate credentials for Terraform.
+az ad sp create-for-rbac --role="Contributor" --scopes="/subscriptions/1234567890"
+ 
+# Try it out
+az login --service-principal -u "http://azure-cli-1234567890" -p "1234567890" --tenant "1234567890"
+az vm list-sizes --location westus
+

@@ -6,12 +6,14 @@ terraform {
 }
 */
 
-# based on https://docs.microsoft.com/en-us/azure/virtual-machines/linux/terraform-install-configure
+provider "azurerm" {
+  subscription_id = "${var.subscription_id}"
+  client_id       = "${var.client_id}"
+  client_secret   = "${var.client_secret}"
+  tenant_id       = "${var.tenant_id}"
+}
 
 resource "azurerm_resource_group" "test" {
   name     = "acctestrg"
   location = "West US 2"
 }
-
-
-
