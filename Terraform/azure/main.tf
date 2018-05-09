@@ -148,11 +148,21 @@ resource "azurerm_virtual_machine" "vm_terraform" {
         if ($pssession -eq $null) {
           Start-Sleep -Seconds 20
         } else {
-            break;
             Write-Host "WinRM connection made";
+            break;
         }
       }
-      icm -Session $pssession -ScriptBlock {hostname}
+      Invoke-Command -Session $psSession -ScriptBlock {
+        Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+      }
+      Invoke-Command -Session $psSession -ScriptBlock {
+          choco feature enable -n allowGlobalConfirmation
+          choco install git
+          choco install visualstudiocode
+          choco install 7zip
+          choco install azure-cli
+          choco install jdk8
+      }
     EOT
 
     interpreter = ["PowerShell", "-Command"]

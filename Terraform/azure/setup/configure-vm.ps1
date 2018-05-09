@@ -11,4 +11,7 @@ Invoke-Command -Session $psSession -ScriptBlock {
     choco feature enable -n allowGlobalConfirmation
     choco install git
     choco install visualstudiocode
+    choco install 7zip
+    choco install jdk8
+    #choco install azure-cli
 }
