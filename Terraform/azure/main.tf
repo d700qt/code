@@ -80,7 +80,7 @@ resource "azurerm_virtual_machine" "vm_terraform" {
   }
 
   os_profile {
-    computer_name  = "tf-01"
+    computer_name  = "tf01"
     admin_username = "${var.machine_username}"
     admin_password = "${var.machine_password}"
   }
@@ -128,6 +128,10 @@ resource "azurerm_virtual_machine" "vm_terraform" {
 
     interpreter = ["PowerShell", "-Command"]
   }
+}
+
+output "public_ip_address" {
+  value = "${data.azurerm_public_ip.pip_terraform.domain_name_label}.${data.azurerm_resource_group.rg_terraform.location}.cloudapp.azure.com"
 }
 
 output "public_ip_address" {

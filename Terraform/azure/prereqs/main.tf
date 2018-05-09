@@ -71,6 +71,7 @@ resource "azurerm_public_ip" "pip_terraform" {
   resource_group_name          = "${azurerm_resource_group.rg_terraform.name}"
   public_ip_address_allocation = "Static"
   idle_timeout_in_minutes      = 30
+  domain_name_label            = "adeweetman-tf01"
 
   tags {
     environment = "dev"
@@ -79,4 +80,8 @@ resource "azurerm_public_ip" "pip_terraform" {
 
 output "terraform_public_ip_address" {
   value = "${azurerm_public_ip.pip_terraform.ip_address}"
+}
+
+output "terraform_public_fqdn" {
+  value = "${azurerm_public_ip.pip_terraform.domain_name_label}.${azurerm_resource_group.rg_terraform.location}.cloudapp.azure.com"
 }
