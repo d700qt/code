@@ -12,89 +12,50 @@ provider "azurerm" {
   tenant_id       = "${var.tenant_id}"
 }
 
-resource "azurerm_resource_group" "rg_terraform" {
-  name     = "rg_terraform"
-  location = "West Europe"
+data "azurerm_resource_group" "rg_terraform" {
+  name = "rg_terraform"
 }
 
-resource "azurerm_network_security_group" "nsg_terraform" {
+data "azurerm_network_security_group" "nsg_terraform" {
   name                = "nsg_terraform"
-  location            = "${azurerm_resource_group.rg_terraform.location}"
-  resource_group_name = "${azurerm_resource_group.rg_terraform.name}"
-
-  security_rule {
-    name                       = "WinRM"
-    priority                   = 100
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "5985"
-    source_address_prefix      = "*"
-    destination_address_prefix = "*"
-  }
-
-  security_rule {
-    name                       = "RDP"
-    priority                   = 101
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "3389"
-    source_address_prefix      = "*"
-    destination_address_prefix = "*"
-  }
-
-  tags {
-    environment = "dev"
-  }
+  resource_group_name = "${data.azurerm_resource_group.rg_terraform.name}"
 }
 
-resource "azurerm_virtual_network" "vnet_terraform" {
+data "azurerm_virtual_network" "vnet_terraform" {
   name                = "vnet_terraform"
-  address_space       = ["10.0.0.0/16"]
-  location            = "${azurerm_resource_group.rg_terraform.location}"
-  resource_group_name = "${azurerm_resource_group.rg_terraform.name}"
+  resource_group_name = "${data.azurerm_resource_group.rg_terraform.name}"
 }
 
-resource "azurerm_subnet" "subnet_terraform" {
+data "azurerm_subnet" "subnet_terraform" {
   name                 = "subnet_terraform"
   resource_group_name  = "${azurerm_resource_group.rg_terraform.name}"
-  virtual_network_name = "${azurerm_virtual_network.vnet_terraform.name}"
-  address_prefix       = "10.0.2.0/24"
+  virtual_network_name = "${data.azurerm_virtual_network.vnet_terraform.name}"
+  resource_group_name  = "${data.azurerm_resource_group.rg_terraform.name}"
 }
 
-resource "azurerm_public_ip" "pip_terraform" {
-  name                         = "pip_terraform"
-  location                     = "${azurerm_resource_group.rg_terraform.location}"
-  resource_group_name          = "${azurerm_resource_group.rg_terraform.name}"
-  public_ip_address_allocation = "Static"
-  idle_timeout_in_minutes      = 30
-
-  tags {
-    environment = "dev"
-  }
+data "azurerm_public_ip" "pip_terraform" {
+  name                = "pip_terraform"
+  resource_group_name = "${data.azurerm_resource_group.rg_terraform.name}"
 }
 
 resource "azurerm_network_interface" "vnic_terraform" {
   name                      = "vnic_terraform"
-  location                  = "${azurerm_resource_group.rg_terraform.location}"
-  resource_group_name       = "${azurerm_resource_group.rg_terraform.name}"
-  network_security_group_id = "${azurerm_network_security_group.nsg_terraform.id}"
+  location                  = "${data.azurerm_resource_group.rg_terraform.location}"
+  resource_group_name       = "${data.azurerm_resource_group.rg_terraform.name}"
+  network_security_group_id = "${data.azurerm_network_security_group.nsg_terraform.id}"
 
   ip_configuration {
     name                          = "ip_terraform"
-    subnet_id                     = "${azurerm_subnet.subnet_terraform.id}"
+    subnet_id                     = "${data.azurerm_subnet.subnet_terraform.id}"
     private_ip_address_allocation = "dynamic"
-    public_ip_address_id          = "${azurerm_public_ip.pip_terraform.id}"
+    public_ip_address_id          = "${data.azurerm_public_ip.pip_terraform.id}"
   }
 }
 
 resource "azurerm_virtual_machine" "vm_terraform" {
   name                  = "vm_terraform"
-  location              = "${azurerm_resource_group.rg_terraform.location}"
-  resource_group_name   = "${azurerm_resource_group.rg_terraform.name}"
+  location              = "${data.azurerm_resource_group.rg_terraform.location}"
+  resource_group_name   = "${data.azurerm_resource_group.rg_terraform.name}"
   network_interface_ids = ["${azurerm_network_interface.vnic_terraform.id}"]
   vm_size               = "Standard_B2ms"
 
@@ -141,7 +102,7 @@ resource "azurerm_virtual_machine" "vm_terraform" {
       $cred = New-Object System.Management.Automation.PSCredential($username,$password);  
       while ($true) {
         try {
-          $pssession = New-PSSession -ComputerName "${azurerm_public_ip.pip_terraform.ip_address}" -Credential $cred -ErrorAction Stop
+          $pssession = New-PSSession -ComputerName "${data.azurerm_public_ip.pip_terraform.ip_address}" -Credential $cred -ErrorAction Stop
         } catch {
           write-warning -message "WinRM connection could not be made..."
         }
@@ -170,5 +131,5 @@ resource "azurerm_virtual_machine" "vm_terraform" {
 }
 
 output "public_ip_address" {
-  value = "${azurerm_public_ip.pip_terraform.ip_address}"
+  value = "${data.azurerm_public_ip.pip_terraform.ip_address}"
 }
