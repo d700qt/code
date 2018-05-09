@@ -34,6 +34,18 @@ resource "azurerm_network_security_group" "nsg_terraform" {
     destination_address_prefix = "*"
   }
 
+  security_rule {
+    name                       = "RDP"
+    priority                   = 101
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "3389"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+
   tags {
     environment = "dev"
   }
@@ -94,9 +106,9 @@ resource "azurerm_virtual_machine" "vm_terraform" {
 
   storage_image_reference {
     publisher = "MicrosoftWindowsServer"
-    offer     = "WindowsServerSemiAnnual"
-    sku       = "Datacenter-Core-1709-smalldisk"
-    version   = "latest"                         #1709.0.20180412
+    offer     = "WindowsServer"
+    sku       = "2016-Datacenter"
+    version   = "latest"                 #1709.0.20180412
   }
 
   storage_os_disk {
@@ -122,18 +134,28 @@ resource "azurerm_virtual_machine" "vm_terraform" {
     environment = "dev"
   }
 
-  provisioner "remote-exec" {
-    connection {
-      type     = "winrm"
-      user     = "${var.machine_username}"
-      password = "${var.machine_password}"
-    }
+  provisioner "local-exec" {
+    command = <<EOT
+      $password = "${var.machine_password}" | ConvertTo-SecureString -asPlainText -Force;
+      $username = "${var.machine_username}";
+      $cred = New-Object System.Management.Automation.PSCredential($username,$password);  
+      while ($true) {
+        try {
+          $pssession = New-PSSession -ComputerName "${azurerm_public_ip.pip_terraform.ip_address}" -Credential $cred -ErrorAction Stop
+        } catch {
+          write-warning -message "WinRM connection could not be made..."
+        }
+        if ($pssession -eq $null) {
+          Start-Sleep -Seconds 20
+        } else {
+            break;
+            Write-Host "WinRM connection made";
+        }
+      }
+      icm -Session $pssession -ScriptBlock {hostname}
+    EOT
 
-    inline = [
-      "hostname > c:\\windows\\temp\\hostname.txt",
-    ]
-
-    on_failure = "continue"
+    interpreter = ["PowerShell", "-Command"]
   }
 }
 

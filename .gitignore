@@ -10,3 +10,8 @@
 
 #  Private files
 *.private
+
+# Artefacts
+*.exe
+*.dll
+*.pdb
