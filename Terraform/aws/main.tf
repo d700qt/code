@@ -1,4 +1,15 @@
 /*
+data "terraform_remote_state" "network" {
+  backend = "s3"
+  config {
+    bucket = "bucketname"
+    key    = "path/to/terraform.tfstate"
+    region = "eu-west-2"
+    encrypt = true
+    access_key = "blah"
+    secret_key = "password"
+  }
+}
 terraform {
   backend "local" {
     path = "terraform.tfstate"
@@ -29,16 +40,16 @@ module "ec2-instance" {
 
   name           = "my-ec2"
   instance_count = 1
-  
-  ami                    = "ami-8e1627eb" # windows 2016
-  instance_type          = "t2.micro"
+
+  ami                         = "ami-8e1627eb"    # windows 2016
+  instance_type               = "t2.micro"
   associate_public_ip_address = "true"
-  monitoring             = false
-  vpc_security_group_ids = ["sg-3d792c56"]
-  subnet_id              = "subnet-dd4a7490"
+  monitoring                  = false
+  vpc_security_group_ids      = ["sg-3d792c56"]
+  subnet_id                   = "subnet-dd4a7490"
 
   tags = {
-    Terraform = "true"
+    Terraform   = "true"
     Environment = "dev"
   }
 }
