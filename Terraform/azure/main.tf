@@ -130,10 +130,10 @@ resource "azurerm_virtual_machine" "vm_terraform" {
   }
 }
 
-output "public_ip_address" {
+output "terraform_public_fqdn" {
   value = "${data.azurerm_public_ip.pip_terraform.domain_name_label}.${data.azurerm_resource_group.rg_terraform.location}.cloudapp.azure.com"
 }
 
-output "public_ip_address" {
+output "terraform_public_ip_addresspublic_ip_address" {
   value = "${data.azurerm_public_ip.pip_terraform.ip_address}"
 }
