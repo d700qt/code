@@ -94,7 +94,9 @@ resource "azurerm_virtual_machine" "vm_terraform" {
   tags {
     environment = "dev"
   }
+}
 
+resource "null_resource" "bootstrap" {
   provisioner "local-exec" {
     command = <<EOT
       $password = "${var.machine_password}" | ConvertTo-SecureString -asPlainText -Force;
@@ -117,13 +119,27 @@ resource "azurerm_virtual_machine" "vm_terraform" {
         Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
       }
       Invoke-Command -Session $psSession -ScriptBlock {
+          new-item -path "c:\bootstrap" -type Directory
+          write-host "Installing packages"
           choco feature enable -n allowGlobalConfirmation
-          choco install git
-          choco install visualstudiocode
-          choco install 7zip
-          choco install azure-cli
           choco install jdk8
       }
+
+      # need to create new ps session to workaround PowerShell bug regarding copy-item over a remote winrm session to an Azure VM!
+      remove-pssession -session $pssession
+      $pssession = New-PSSession -ComputerName "${data.azurerm_public_ip.pip_terraform.ip_address}" -Credential $cred -ErrorAction Stop
+
+      if (test-path -path "..\..\Bamboo\${var.bamboo_installer_filename}.zip") {
+          write-host "Copying Bamboo files"
+          Copy-Item -path "..\..\Bamboo\${var.bamboo_installer_filename}.zip" -Destination "C:\bootstrap" -ToSession $pssession -Verbose
+          Invoke-Command -Session $psSession -ScriptBlock {
+              Expand-Archive -Path "C:\bootstrap\${var.bamboo_installer_filename}.zip" -DestinationPath "C:\bootstrap\Bamboo"
+              Copy-Item -path "C:\bootstrap\Bamboo\${var.bamboo_installer_filename}" -Destination "C:\Program Files\Bamboo" -Recurse
+              new-item -path "c:\bamboo\bamboo-home" -type Directory
+              [Environment]::SetEnvironmentVariable("BAMBOO_HOME", "C:\bamboo\bamboo-home","Machine")
+          }
+      }
+
     EOT
 
     interpreter = ["PowerShell", "-Command"]
@@ -137,3 +153,14 @@ output "terraform_public_fqdn" {
 output "terraform_public_ip_addresspublic_ip_address" {
   value = "${data.azurerm_public_ip.pip_terraform.ip_address}"
 }
+
+/*
+
+choco install git
+          choco install visualstudiocode
+          choco install 7zip
+          choco install azure-cli
+          
+
+          */
+
