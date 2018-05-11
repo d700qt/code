@@ -129,14 +129,12 @@ resource "null_resource" "bootstrap" {
       remove-pssession -session $pssession
       $pssession = New-PSSession -ComputerName "${data.azurerm_public_ip.pip_terraform.ip_address}" -Credential $cred -ErrorAction Stop
 
-      if (test-path -path "..\..\Bamboo\${var.bamboo_installer_filename}.zip") {
-          write-host "Copying Bamboo files"
-          Copy-Item -path "..\..\Bamboo\${var.bamboo_installer_filename}.zip" -Destination "C:\bootstrap" -ToSession $pssession -Verbose
+      if (test-path -path "..\..\Bamboo\${var.bamboo_installer_filename}") {
+          write-host "Copying and installing Bamboo"
           Invoke-Command -Session $psSession -ScriptBlock {
-              Expand-Archive -Path "C:\bootstrap\${var.bamboo_installer_filename}.zip" -DestinationPath "C:\bootstrap\Bamboo"
-              Copy-Item -path "C:\bootstrap\Bamboo\${var.bamboo_installer_filename}" -Destination "C:\Program Files\Bamboo" -Recurse
-              new-item -path "c:\bamboo\bamboo-home" -type Directory
-              [Environment]::SetEnvironmentVariable("BAMBOO_HOME", "C:\bamboo\bamboo-home","Machine")
+              start-process -filepath "C:\bootstrap\${var.bamboo_installer_filename}" -ArgumentList "-q -wait" -WorkingDirectory "C:\bootstrap" -Wait -Verbose
+              start-process -filepath "$env:ProgramFiles\Bamboo\InstallAsService.bat" - -WorkingDirectory "$env:ProgramFiles\Bamboo" -wait -verbose
+              start-service bamboo
           }
       }
 
@@ -162,5 +160,6 @@ choco install git
           choco install azure-cli
           
 
+          Copy-Item -path "..\..\Bamboo\${var.bamboo_installer_filename}" -Destination "C:\bootstrap" -ToSession $pssession -Verbose
           */
 

@@ -6,5 +6,5 @@ get-item wsman:\localhost\Client\TrustedHosts
 $pssession = New-PSSession -ComputerName $vm -Credential $creds
 
 icm -Session $pssession -ScriptBlock{
-    new-item -path "c:\bootstrap" -type Directory
+    start-process -filepath "$env:ProgramFiles\Bamboo\InstallAsService.bat" -WorkingDirectory "$env:ProgramFiles\Bamboo" -Verbose -Wait
 } 
