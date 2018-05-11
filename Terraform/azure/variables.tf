@@ -4,4 +4,6 @@ variable "client_secret" {}
 variable "tenant_id" {}
 variable "machine_username" {}
 variable "machine_password" {}
+variable "machine_name_prefix" {}
 variable "bamboo_installer_filename" {}
+variable "bamboo_machine_name_suffix" {}

@@ -83,7 +83,7 @@ resource "azurerm_public_ip" "pip_terraform" {
   resource_group_name          = "${azurerm_resource_group.rg_terraform.name}"
   public_ip_address_allocation = "Static"
   idle_timeout_in_minutes      = 30
-  domain_name_label            = "adeweetman-tf01"
+  domain_name_label            = "adeweetman-bam1"
 
   tags {
     environment = "dev"
