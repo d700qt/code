@@ -6,7 +6,7 @@ terraform {
 }
 */
 
-# Run terraform init -backend-config="backend.private" to switch backend
+# Run terraform init -backend-config="backend.private" to switch backend type
 terraform {
   backend "s3" {}
 }
