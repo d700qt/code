@@ -5,5 +5,5 @@ variable "tenant_id" {}
 variable "machine_username" {}
 variable "machine_password" {}
 variable "machine_name_prefix" {}
+variable "ci_machine_name_suffix" {}
 variable "bamboo_installer_filename" {}
-variable "bamboo_machine_name_suffix" {}

@@ -16,11 +16,3 @@ $pssession = New-PSSession -ComputerName $vm -Credential $creds
 
 
 
-# Bamboo setup
-Invoke-Command -Session $psSession -ScriptBlock {
-    start-process -filepath "C:\bootstrap\${var.bamboo_installer_filename}" -ArgumentList "-q -wait" -WorkingDirectory "C:\bootstrap" -Wait -Verbose
-    start-process -filepath "$env:ProgramFiles\Bamboo\InstallAsService.bat" - -WorkingDirectory "$env:ProgramFiles\Bamboo" -wait -verbose
-    start-service bamboo
-}
-
-Enter-PSSession -Session $pssession

@@ -5,6 +5,11 @@ terraform {
   }
 }
 */
+
+terraform {
+  backend "s3" {}
+}
+
 provider "azurerm" {
   subscription_id = "${var.subscription_id}"
   client_id       = "${var.client_id}"
@@ -52,8 +57,8 @@ resource "azurerm_network_interface" "vnic_terraform" {
   }
 }
 
-resource "azurerm_virtual_machine" "bam1" {
-  name                  = "${var.bamboo_machine_name_suffix}"
+resource "azurerm_virtual_machine" "ci1" {
+  name                  = "${var.ci_machine_name_suffix}"
   location              = "${data.azurerm_resource_group.rg_terraform.location}"
   resource_group_name   = "${data.azurerm_resource_group.rg_terraform.name}"
   network_interface_ids = ["${azurerm_network_interface.vnic_terraform.id}"]
@@ -80,7 +85,7 @@ resource "azurerm_virtual_machine" "bam1" {
   }
 
   os_profile {
-    computer_name  = "${var.machine_name_prefix}-${var.bamboo_machine_name_suffix}"
+    computer_name  = "${var.machine_name_prefix}-${var.ci_machine_name_suffix}"
     admin_username = "${var.machine_username}"
     admin_password = "${var.machine_password}"
   }
@@ -97,7 +102,7 @@ resource "azurerm_virtual_machine" "bam1" {
 }
 
 resource "null_resource" "bootstrap" {
-  depends_on = ["azurerm_virtual_machine.bam1"]
+  depends_on = ["azurerm_virtual_machine.ci1"]
 
   provisioner "local-exec" {
     command = <<EOT
@@ -131,11 +136,30 @@ resource "null_resource" "bootstrap" {
       remove-pssession -session $pssession
       $pssession = New-PSSession -ComputerName "${data.azurerm_public_ip.pip_terraform.ip_address}" -Credential $cred -ErrorAction Stop
 
-      if (test-path -path "..\..\Bamboo\${var.bamboo_installer_filename}") {
-          write-host "Copying and installing Bamboo"
-          Copy-Item -path "..\..\Bamboo\${var.bamboo_installer_filename}" -Destination "C:\bootstrap" -ToSession $pssession -Verbose
-      }
+      # Set up Bamboo
+      $bambooInstalled = Invoke-Command -Session $psSession -ScriptBlock {get-service | where name -eq "bamboo"}
+      if (! $bambooInstalled) {
+        Invoke-Command -Session $psSession -ScriptBlock {
+          write-host "Downloading bamboo"
+          invoke-webrequest -Uri https://www.atlassian.com/software/bamboo/downloads/binary/${var.bamboo_installer_filename} -UseBasicParsing -OutFile "C:\bootstrap\${var.bamboo_installer_filename}"
 
+          write-host "Installing Bamboo..."
+          Unblock-File -path "C:\bootstrap\${var.bamboo_installer_filename}"
+          start-process -filepath  "C:\bootstrap\${var.bamboo_installer_filename}" -ArgumentList "-q -wait" -WorkingDirectory "C:\bootstrap" -Wait -Verbose
+          start-sleep -seconds 10
+        }
+
+        write-host "Installing Bamboo service"
+        remove-pssession -session $pssession
+        $pssession = New-PSSession -ComputerName "${data.azurerm_public_ip.pip_terraform.ip_address}" -Credential $cred -ErrorAction Stop
+        Invoke-Command -Session $psSession -ScriptBlock {
+          start-process -filepath "$env:ProgramFiles\Bamboo\InstallAsService.bat" - -WorkingDirectory "$env:ProgramFiles\Bamboo" -wait -verbose
+          start-sleep -seconds 10
+          start-service bamboo
+          new-netfirewallrule -DisplayName "Allow Bamboo http requests" -Direction "inbound" -localport 8085 -protocol tcp -action allow
+        }
+      }
+      
     EOT
 
     interpreter = ["PowerShell", "-Command"]
