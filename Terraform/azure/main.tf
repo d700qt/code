@@ -131,6 +131,7 @@ resource "null_resource" "bootstrap" {
           write-host "Installing packages"
           choco feature enable -n allowGlobalConfirmation
           choco install jdk8
+          choco install git
           choco install visualstudiocode
       }
 
