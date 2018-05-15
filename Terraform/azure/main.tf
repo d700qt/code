@@ -131,6 +131,7 @@ resource "null_resource" "bootstrap" {
           write-host "Installing packages"
           choco feature enable -n allowGlobalConfirmation
           choco install jdk8
+          choco install visualstudiocode
       }
 
       # need to create new ps session to workaround PowerShell bug regarding copy-item over a remote winrm session to an Azure VM!
