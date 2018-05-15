@@ -5,6 +5,12 @@ terraform {
   }
 }
 */
+
+# Run terraform init -backend-config="backend.private" to switch backend
+terraform {
+  backend "s3" {}
+}
+
 provider "azurerm" {
   subscription_id = "${var.subscription_id}"
   client_id       = "${var.client_id}"
