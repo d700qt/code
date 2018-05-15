@@ -10,3 +10,10 @@ C:\WIP\Hello\HelloWorld\HelloWorld\obj\Debug\HelloWorld.pdb
 C:\WIP\Hello\HelloWorld\HelloWorld\bin\Debug\HelloWorld.exe
 C:\WIP\Hello\HelloWorld\HelloWorld\bin\Debug\HelloWorld.pdb
 C:\WIP\Hello\HelloWorld\HelloWorld\obj\Debug\HelloWorld.csprojResolveAssemblyReference.cache
+C:\Users\adeweetmanadmin\bamboo-home\xml-data\build-dir\FP-FP-JOB1\Apps\HelloWorld\HelloWorld\bin\Debug\HelloWorld.exe.config
+C:\Users\adeweetmanadmin\bamboo-home\xml-data\build-dir\FP-FP-JOB1\Apps\HelloWorld\HelloWorld\bin\Debug\HelloWorld.exe
+C:\Users\adeweetmanadmin\bamboo-home\xml-data\build-dir\FP-FP-JOB1\Apps\HelloWorld\HelloWorld\bin\Debug\HelloWorld.pdb
+C:\Users\adeweetmanadmin\bamboo-home\xml-data\build-dir\FP-FP-JOB1\Apps\HelloWorld\HelloWorld\obj\Debug\HelloWorld.csprojAssemblyReference.cache
+C:\Users\adeweetmanadmin\bamboo-home\xml-data\build-dir\FP-FP-JOB1\Apps\HelloWorld\HelloWorld\obj\Debug\HelloWorld.csproj.CoreCompileInputs.cache
+C:\Users\adeweetmanadmin\bamboo-home\xml-data\build-dir\FP-FP-JOB1\Apps\HelloWorld\HelloWorld\obj\Debug\HelloWorld.exe
+C:\Users\adeweetmanadmin\bamboo-home\xml-data\build-dir\FP-FP-JOB1\Apps\HelloWorld\HelloWorld\obj\Debug\HelloWorld.pdb

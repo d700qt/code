@@ -12,3 +12,14 @@ C:\WIP\Hello\HelloWorld\HelloWorldTests\bin\Debug\HelloWorld.pdb
 C:\WIP\Hello\HelloWorld\HelloWorldTests\obj\Debug\HelloWorldTests.csprojResolveAssemblyReference.cache
 C:\WIP\Hello\HelloWorld\HelloWorldTests\obj\Debug\HelloWorldTests.dll
 C:\WIP\Hello\HelloWorld\HelloWorldTests\obj\Debug\HelloWorldTests.pdb
+C:\Users\adeweetmanadmin\bamboo-home\xml-data\build-dir\FP-FP-JOB1\Apps\HelloWorld\HelloWorldTests\bin\Debug\HelloWorldTests.dll
+C:\Users\adeweetmanadmin\bamboo-home\xml-data\build-dir\FP-FP-JOB1\Apps\HelloWorld\HelloWorldTests\bin\Debug\HelloWorldTests.pdb
+C:\Users\adeweetmanadmin\bamboo-home\xml-data\build-dir\FP-FP-JOB1\Apps\HelloWorld\HelloWorldTests\bin\Debug\HelloWorld.exe
+C:\Users\adeweetmanadmin\bamboo-home\xml-data\build-dir\FP-FP-JOB1\Apps\HelloWorld\HelloWorldTests\bin\Debug\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll
+C:\Users\adeweetmanadmin\bamboo-home\xml-data\build-dir\FP-FP-JOB1\Apps\HelloWorld\HelloWorldTests\bin\Debug\HelloWorld.pdb
+C:\Users\adeweetmanadmin\bamboo-home\xml-data\build-dir\FP-FP-JOB1\Apps\HelloWorld\HelloWorldTests\bin\Debug\HelloWorld.exe.config
+C:\Users\adeweetmanadmin\bamboo-home\xml-data\build-dir\FP-FP-JOB1\Apps\HelloWorld\HelloWorldTests\obj\Debug\HelloWorldTests.csprojAssemblyReference.cache
+C:\Users\adeweetmanadmin\bamboo-home\xml-data\build-dir\FP-FP-JOB1\Apps\HelloWorld\HelloWorldTests\obj\Debug\HelloWorldTests.csproj.CoreCompileInputs.cache
+C:\Users\adeweetmanadmin\bamboo-home\xml-data\build-dir\FP-FP-JOB1\Apps\HelloWorld\HelloWorldTests\obj\Debug\HelloWorldTests.csproj.CopyComplete
+C:\Users\adeweetmanadmin\bamboo-home\xml-data\build-dir\FP-FP-JOB1\Apps\HelloWorld\HelloWorldTests\obj\Debug\HelloWorldTests.dll
+C:\Users\adeweetmanadmin\bamboo-home\xml-data\build-dir\FP-FP-JOB1\Apps\HelloWorld\HelloWorldTests\obj\Debug\HelloWorldTests.pdb
