@@ -1,3 +1,15 @@
+<#
+Manual steps
+Apply trial Bamboo license
+Bamboo config
+
+Installed VS 2017 Community edition, specifically:
+- Testing tools core features
+- MS build (+ some automatically selected dependencies
+- PLus the core VS IDE editor
+#>
+
+
 $creds = get-credential
 $vm = read-host -Prompt "Please enter hostname or IP address"
 
