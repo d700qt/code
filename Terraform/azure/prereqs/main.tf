@@ -96,10 +96,31 @@ resource "azurerm_public_ip" "pip_terraform" {
   }
 }
 
+resource "azurerm_public_ip" "pip_win1" {
+  name                         = "pip_win1"
+  location                     = "${azurerm_resource_group.rg_terraform.location}"
+  resource_group_name          = "${azurerm_resource_group.rg_terraform.name}"
+  public_ip_address_allocation = "Static"
+  idle_timeout_in_minutes      = 30
+  domain_name_label            = "adeweetman-win1"
+
+  tags {
+    environment = "dev"
+  }
+}
+
 output "terraform_public_ip_address" {
   value = "${azurerm_public_ip.pip_terraform.ip_address}"
 }
 
 output "terraform_public_fqdn" {
   value = "${azurerm_public_ip.pip_terraform.domain_name_label}.${azurerm_resource_group.rg_terraform.location}.cloudapp.azure.com"
+}
+
+output "win1_public_ip_address" {
+  value = "${azurerm_public_ip.pip_win1.ip_address}"
+}
+
+output "win1_public_fqdn" {
+  value = "${azurerm_public_ip.pip_win1.domain_name_label}.${azurerm_resource_group.rg_terraform.location}.cloudapp.azure.com"
 }
