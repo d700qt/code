@@ -133,6 +133,7 @@ resource "null_resource" "bootstrap" {
           choco install jdk8
           choco install git
           choco install visualstudiocode
+          choco install terraform
       }
 
       # need to create new ps session to workaround PowerShell bug regarding copy-item over a remote winrm session to an Azure VM!

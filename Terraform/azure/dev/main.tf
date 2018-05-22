@@ -6,7 +6,10 @@ terraform {
 }
 */
 
-# Run terraform init -backend-config="backend.private" to switch backend
+/*
+Run terraform init -backend-config="backend.private" to switch backend
+or terraform init -backend-config="bucket=<bucketname>" -backend-config "key=<keyname>"
+*/
 terraform {
   backend "s3" {}
 }
