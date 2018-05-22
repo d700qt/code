@@ -79,8 +79,9 @@ resource "azurerm_virtual_machine" "win1" {
   }
 
   storage_os_disk {
-    name              = "win1_disk_os"
-    caching           = "ReadWrite"
+    name    = "win1_disk_os"
+    caching = "ReadWrite"
+
     create_option     = "FromImage"
     managed_disk_type = "Standard_LRS"
   }
