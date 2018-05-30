@@ -117,7 +117,20 @@ resource "azurerm_public_ip" "pip_win1" {
   domain_name_label            = "adeweetman-win1"
 
   tags {
-    environment = "dev"
+    environment = "uat"
+  }
+}
+
+resource "azurerm_public_ip" "pip_win2" {
+  name                         = "pip_win2"
+  location                     = "${azurerm_resource_group.rg_terraform.location}"
+  resource_group_name          = "${azurerm_resource_group.rg_terraform.name}"
+  public_ip_address_allocation = "Static"
+  idle_timeout_in_minutes      = 30
+  domain_name_label            = "adeweetman-win2"
+
+  tags {
+    environment = "prod"
   }
 }
 
@@ -135,4 +148,12 @@ output "win1_public_ip_address" {
 
 output "win1_public_fqdn" {
   value = "${azurerm_public_ip.pip_win1.domain_name_label}.${azurerm_resource_group.rg_terraform.location}.cloudapp.azure.com"
+}
+
+output "win2_public_ip_address" {
+  value = "${azurerm_public_ip.pip_win2.ip_address}"
+}
+
+output "win2_public_fqdn" {
+  value = "${azurerm_public_ip.pip_win2.domain_name_label}.${azurerm_resource_group.rg_terraform.location}.cloudapp.azure.com"
 }
