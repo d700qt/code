@@ -5,7 +5,7 @@ project:
     name: Dragon Slayer Quest
 # List of plan's stages
 stages:
-	#List of stage's jobs
+	#List of stages jobs
   - jobs:
 	  # Scripts which are going to be executed within this job
       - scripts:
