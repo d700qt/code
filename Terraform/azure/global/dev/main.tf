@@ -44,14 +44,14 @@ data "azurerm_public_ip" "pip_dev1" {
   resource_group_name = "${data.azurerm_resource_group.rg_terraform.name}"
 }
 
-resource "azurerm_network_interface" "vnic_terraform" {
-  name                      = "vnic_terraform"
+resource "azurerm_network_interface" "vnic_dev1" {
+  name                      = "vnic_dev1"
   location                  = "${data.azurerm_resource_group.rg_terraform.location}"
   resource_group_name       = "${data.azurerm_resource_group.rg_terraform.name}"
   network_security_group_id = "${data.azurerm_network_security_group.nsg_terraform.id}"
 
   ip_configuration {
-    name                          = "ip_terraform"
+    name                          = "ip_dev1"
     subnet_id                     = "${data.azurerm_subnet.subnet_terraform.id}"
     private_ip_address_allocation = "dynamic"
     public_ip_address_id          = "${data.azurerm_public_ip.pip_dev1.id}"
@@ -63,7 +63,7 @@ resource "azurerm_virtual_machine" "dev1" {
   location              = "${data.azurerm_resource_group.rg_terraform.location}"
   resource_group_name   = "${data.azurerm_resource_group.rg_terraform.name}"
   network_interface_ids = ["${azurerm_network_interface.vnic_terraform.id}"]
-  vm_size               = "Standard_B2ms"
+  vm_size               = "Standard_D2sv3"
 
   # Uncomment this line to delete the OS disk automatically when deleting the VM
   delete_os_disk_on_termination = true
@@ -79,7 +79,7 @@ resource "azurerm_virtual_machine" "dev1" {
   }
 
   storage_os_disk {
-    name              = "disk_os"
+    name              = "${var.ci_machine_name_suffix}_disk_os"
     caching           = "ReadWrite"
     create_option     = "FromImage"
     managed_disk_type = "Standard_LRS"
@@ -98,7 +98,7 @@ resource "azurerm_virtual_machine" "dev1" {
   }
 
   tags {
-    environment = "dev"
+    environment = "global"
   }
 }
 
@@ -130,39 +130,16 @@ resource "null_resource" "bootstrap" {
           new-item -path "c:\bootstrap" -type Directory
           write-host "Installing packages"
           choco feature enable -n allowGlobalConfirmation
-          choco install jdk8
           choco install git
           choco install visualstudiocode
-          choco install terraform
+          choco install virtualbox
+          choco install vagrant
+          choco install packer
       }
 
       # need to create new ps session to workaround PowerShell bug regarding copy-item over a remote winrm session to an Azure VM!
       remove-pssession -session $pssession
       $pssession = New-PSSession -ComputerName "${data.azurerm_public_ip.pip_dev1.ip_address}" -Credential $cred -ErrorAction Stop
-
-      # Set up Bamboo
-      $bambooInstalled = Invoke-Command -Session $psSession -ScriptBlock {get-service | where name -eq "bamboo"}
-      if (! $bambooInstalled) {
-        Invoke-Command -Session $psSession -ScriptBlock {
-          write-host "Downloading bamboo"
-          invoke-webrequest -Uri https://www.atlassian.com/software/bamboo/downloads/binary/${var.bamboo_installer_filename} -UseBasicParsing -OutFile "C:\bootstrap\${var.bamboo_installer_filename}"
-
-          write-host "Installing Bamboo..."
-          Unblock-File -path "C:\bootstrap\${var.bamboo_installer_filename}"
-          start-process -filepath  "C:\bootstrap\${var.bamboo_installer_filename}" -ArgumentList "-q -wait" -WorkingDirectory "C:\bootstrap" -Wait -Verbose
-          start-sleep -seconds 10
-        }
-
-        write-host "Installing Bamboo service"
-        remove-pssession -session $pssession
-        $pssession = New-PSSession -ComputerName "${data.azurerm_public_ip.pip_dev1.ip_address}" -Credential $cred -ErrorAction Stop
-        Invoke-Command -Session $psSession -ScriptBlock {
-          start-process -filepath "$env:ProgramFiles\Bamboo\InstallAsService.bat" - -WorkingDirectory "$env:ProgramFiles\Bamboo" -wait -verbose
-          start-sleep -seconds 10
-          start-service bamboo
-          new-netfirewallrule -DisplayName "Allow Bamboo http requests" -Direction "inbound" -localport 8085 -protocol tcp -action allow
-        }
-      }
       
     EOT
 
