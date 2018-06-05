@@ -39,22 +39,22 @@ data "azurerm_subnet" "subnet_terraform" {
   resource_group_name  = "${data.azurerm_resource_group.rg_terraform.name}"
 }
 
-data "azurerm_public_ip" "pip_terraform" {
-  name                = "pip_terraform"
+data "azurerm_public_ip" "pip_ci1" {
+  name                = "pip_ci1"
   resource_group_name = "${data.azurerm_resource_group.rg_terraform.name}"
 }
 
-resource "azurerm_network_interface" "vnic_terraform" {
-  name                      = "vnic_terraform"
+resource "azurerm_network_interface" "vnic_ci1" {
+  name                      = "vnic_ci1"
   location                  = "${data.azurerm_resource_group.rg_terraform.location}"
   resource_group_name       = "${data.azurerm_resource_group.rg_terraform.name}"
   network_security_group_id = "${data.azurerm_network_security_group.nsg_terraform.id}"
 
   ip_configuration {
-    name                          = "ip_terraform"
+    name                          = "ip_ci1"
     subnet_id                     = "${data.azurerm_subnet.subnet_terraform.id}"
     private_ip_address_allocation = "dynamic"
-    public_ip_address_id          = "${data.azurerm_public_ip.pip_terraform.id}"
+    public_ip_address_id          = "${data.azurerm_public_ip.pip_ci1.id}"
   }
 }
 
@@ -62,7 +62,7 @@ resource "azurerm_virtual_machine" "ci1" {
   name                  = "${var.ci_machine_name_suffix}"
   location              = "${data.azurerm_resource_group.rg_terraform.location}"
   resource_group_name   = "${data.azurerm_resource_group.rg_terraform.name}"
-  network_interface_ids = ["${azurerm_network_interface.vnic_terraform.id}"]
+  network_interface_ids = ["${azurerm_network_interface.vnic_ci1.id}"]
   vm_size               = "Standard_B2ms"
 
   # Uncomment this line to delete the OS disk automatically when deleting the VM
@@ -112,7 +112,7 @@ resource "null_resource" "bootstrap" {
       $cred = New-Object System.Management.Automation.PSCredential($username,$password);  
       while ($true) {
         try {
-          $pssession = New-PSSession -ComputerName "${data.azurerm_public_ip.pip_terraform.ip_address}" -Credential $cred -ErrorAction Stop
+          $pssession = New-PSSession -ComputerName "${data.azurerm_public_ip.pip_ci1.ip_address}" -Credential $cred -ErrorAction Stop
         } catch {
           write-warning -message "WinRM connection could not be made..."
         }
@@ -138,7 +138,7 @@ resource "null_resource" "bootstrap" {
 
       # need to create new ps session to workaround PowerShell bug regarding copy-item over a remote winrm session to an Azure VM!
       remove-pssession -session $pssession
-      $pssession = New-PSSession -ComputerName "${data.azurerm_public_ip.pip_terraform.ip_address}" -Credential $cred -ErrorAction Stop
+      $pssession = New-PSSession -ComputerName "${data.azurerm_public_ip.pip_ci1.ip_address}" -Credential $cred -ErrorAction Stop
 
       # Set up Bamboo
       $bambooInstalled = Invoke-Command -Session $psSession -ScriptBlock {get-service | where name -eq "bamboo"}
@@ -155,7 +155,7 @@ resource "null_resource" "bootstrap" {
 
         write-host "Installing Bamboo service"
         remove-pssession -session $pssession
-        $pssession = New-PSSession -ComputerName "${data.azurerm_public_ip.pip_terraform.ip_address}" -Credential $cred -ErrorAction Stop
+        $pssession = New-PSSession -ComputerName "${data.azurerm_public_ip.pip_ci1.ip_address}" -Credential $cred -ErrorAction Stop
         Invoke-Command -Session $psSession -ScriptBlock {
           start-process -filepath "$env:ProgramFiles\Bamboo\InstallAsService.bat" - -WorkingDirectory "$env:ProgramFiles\Bamboo" -wait -verbose
           start-sleep -seconds 10
@@ -171,9 +171,9 @@ resource "null_resource" "bootstrap" {
 }
 
 output "terraform_public_fqdn" {
-  value = "${data.azurerm_public_ip.pip_terraform.domain_name_label}.${data.azurerm_resource_group.rg_terraform.location}.cloudapp.azure.com"
+  value = "${data.azurerm_public_ip.pip_ci1.domain_name_label}.${data.azurerm_resource_group.rg_terraform.location}.cloudapp.azure.com"
 }
 
 output "terraform_public_ip_address" {
-  value = "${data.azurerm_public_ip.pip_terraform.ip_address}"
+  value = "${data.azurerm_public_ip.pip_ci1.ip_address}"
 }

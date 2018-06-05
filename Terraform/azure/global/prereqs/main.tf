@@ -77,7 +77,7 @@ resource "azurerm_network_security_group" "nsg_terraform" {
   }
 
   tags {
-    environment = "dev"
+    environment = "global"
   }
 }
 
@@ -95,8 +95,8 @@ resource "azurerm_subnet" "subnet_terraform" {
   address_prefix       = "10.0.2.0/24"
 }
 
-resource "azurerm_public_ip" "pip_terraform" {
-  name                         = "pip_terraform"
+resource "azurerm_public_ip" "pip_ci1" {
+  name                         = "pip_ci1"
   location                     = "${azurerm_resource_group.rg_terraform.location}"
   resource_group_name          = "${azurerm_resource_group.rg_terraform.name}"
   public_ip_address_allocation = "Static"
@@ -104,7 +104,20 @@ resource "azurerm_public_ip" "pip_terraform" {
   domain_name_label            = "adeweetman-ci1"
 
   tags {
-    environment = "dev"
+    environment = "global"
+  }
+}
+
+resource "azurerm_public_ip" "pip_dev1" {
+  name                         = "pip_dev1"
+  location                     = "${azurerm_resource_group.rg_terraform.location}"
+  resource_group_name          = "${azurerm_resource_group.rg_terraform.name}"
+  public_ip_address_allocation = "Static"
+  idle_timeout_in_minutes      = 30
+  domain_name_label            = "adeweetman-dev1"
+
+  tags {
+    environment = "global"
   }
 }
 
@@ -134,12 +147,20 @@ resource "azurerm_public_ip" "pip_win2" {
   }
 }
 
-output "terraform_public_ip_address" {
-  value = "${azurerm_public_ip.pip_terraform.ip_address}"
+output "ci1_public_ip_address" {
+  value = "${azurerm_public_ip.pip_ci1.ip_address}"
 }
 
-output "terraform_public_fqdn" {
-  value = "${azurerm_public_ip.pip_terraform.domain_name_label}.${azurerm_resource_group.rg_terraform.location}.cloudapp.azure.com"
+output "ci1_public_fqdn" {
+  value = "${azurerm_public_ip.pip_ci1.domain_name_label}.${azurerm_resource_group.rg_terraform.location}.cloudapp.azure.com"
+}
+
+output "dev1_public_ip_address" {
+  value = "${azurerm_public_ip.pip_dev1.ip_address}"
+}
+
+output "dev1_public_fqdn" {
+  value = "${azurerm_public_ip.pip_dev1.domain_name_label}.${azurerm_resource_group.rg_terraform.location}.cloudapp.azure.com"
 }
 
 output "win1_public_ip_address" {
