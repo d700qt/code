@@ -63,7 +63,7 @@ resource "azurerm_virtual_machine" "dev1" {
   location              = "${data.azurerm_resource_group.rg_terraform.location}"
   resource_group_name   = "${data.azurerm_resource_group.rg_terraform.name}"
   network_interface_ids = ["${azurerm_network_interface.vnic_dev1.id}"]
-  vm_size               = "Standard_D2sv3"
+  vm_size               = "Standard_D2s_v3"
 
   # Uncomment this line to delete the OS disk automatically when deleting the VM
   delete_os_disk_on_termination = true
