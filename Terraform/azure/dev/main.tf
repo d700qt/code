@@ -59,10 +59,10 @@ resource "azurerm_network_interface" "vnic_dev1" {
 }
 
 resource "azurerm_virtual_machine" "dev1" {
-  name                  = "${var.ci_machine_name_suffix}"
+  name                  = "${var.dev1_machine_name_suffix}"
   location              = "${data.azurerm_resource_group.rg_terraform.location}"
   resource_group_name   = "${data.azurerm_resource_group.rg_terraform.name}"
-  network_interface_ids = ["${azurerm_network_interface.vnic_terraform.id}"]
+  network_interface_ids = ["${azurerm_network_interface.vnic_dev1.id}"]
   vm_size               = "Standard_D2sv3"
 
   # Uncomment this line to delete the OS disk automatically when deleting the VM
@@ -79,14 +79,14 @@ resource "azurerm_virtual_machine" "dev1" {
   }
 
   storage_os_disk {
-    name              = "${var.ci_machine_name_suffix}_disk_os"
+    name              = "${var.dev1_machine_name_suffix}_disk_os"
     caching           = "ReadWrite"
     create_option     = "FromImage"
     managed_disk_type = "Standard_LRS"
   }
 
   os_profile {
-    computer_name  = "${var.machine_name_prefix}-${var.ci_machine_name_suffix}"
+    computer_name  = "${var.machine_name_prefix}-${var.dev1_machine_name_suffix}"
     admin_username = "${var.machine_username}"
     admin_password = "${var.machine_password}"
   }

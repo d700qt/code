@@ -5,4 +5,4 @@ variable "tenant_id" {}
 variable "machine_username" {}
 variable "machine_password" {}
 variable "machine_name_prefix" {}
-variable "dev_machine_name_suffix" {}
+variable "dev1_machine_name_suffix" {}
