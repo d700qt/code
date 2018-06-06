@@ -18,3 +18,5 @@
 *.pdb
 *.zip
 
+# Vagrant files
+*.Vagrant
