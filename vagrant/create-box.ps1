@@ -11,6 +11,6 @@ set-item wsman:\localhost\Client\TrustedHosts -value *
 get-item wsman:\localhost\Client\TrustedHosts
 
 $cred = Get-Credential
-$pssession = New-PSSession -ComputerName 192.168.56.101 -Port 5985 -Credential $cred
+$pssession = New-PSSession -ComputerName 10.0.2.15 -Port 5985 -Credential $cred
 
 icm -Session $pssession -ScriptBlock {hostname}
