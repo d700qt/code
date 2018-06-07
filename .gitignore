@@ -20,3 +20,4 @@
 
 # Vagrant files
 *.Vagrant
+*.box
