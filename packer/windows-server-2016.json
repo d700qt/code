@@ -1,0 +1,34 @@
+{
+    "builders": [{
+    "type": "virtualbox-iso",
+    "vboxmanage": [
+      [ "modifyvm", "{{.Name}}", "--natpf1", "winrm,tcp,,55985,,5985" ],
+      [ "modifyvm", "{{.Name}}", "--memory", "2048" ],
+      [ "modifyvm", "{{.Name}}", "--cpus", "2" ]
+    ],
+    "guest_os_type": "Windows2016_64",
+    "iso_url": "c:\\isos\\en_windows_server_2016_updated_feb_2018_x64_dvd_11636692.iso",
+    "iso_checksum": "7ADC82E00F1367B43897BB969A75BBF96D46F588",
+    "iso_checksum_type": "sha1",
+    "communicator": "winrm",
+    "winrm_username": "vagrant ",
+    "winrm_password": "vagrant",
+    "winrm_port": "55985",
+    "winrm_timeout": "5h",
+    "guest_additions_mode": "disable",
+    "shutdown_command": "C:/windows/system32/sysprep/sysprep.exe /generalize /oobe /unattend:C:/Windows/Panther/Unattend/unattend.xml /quiet /shutdown",
+    "shutdown_timeout": "15m",
+    "floppy_files": [
+      "answer_files/2016/Autounattend.xml",
+      "scripts/winrm.ps1"
+    ]
+  }],
+    "post-processors": [
+    {
+      "type": "vagrant",
+      "keep_input_artifact": true,
+      "output": "windows2016min-{{.Provider}}.box",
+      "vagrantfile_template": "vagrantfile-windows.template"
+    }
+  ]
+}
