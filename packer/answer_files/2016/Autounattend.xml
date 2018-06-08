@@ -70,7 +70,8 @@
                 </OSImage>
             </ImageInstall>
             <UserData>
-                <ProductKey>
+                 <ProductKey>
+                    <Key>????</Key>
                     <WillShowUI>OnError</WillShowUI>
                 </ProductKey>
                 <AcceptEula>true</AcceptEula>

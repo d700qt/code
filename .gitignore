@@ -25,6 +25,6 @@
 # Plantuml files
 *.puml
 
-# Virtual box files
-*.vdi
+# Packer files
+**/output-virtualbox-iso/*
 
