@@ -9,12 +9,14 @@ participant octopus order 40
 database sql_ipam order 50
 
 vro_user -> vro : run create-environment
+    note left: parameters:\n pTargetEnvironment,\n pBusinessGroupDesc,\n pBusinessGroupManagers,\n pBusinessGroupManagerGroup,\n pTargetDeliveryStream,\n pBusinessGroupSupportUsers,\n pBusinessGroupSupportUserGroups,\n pTargetDeliveryStreamProject
     activate vro
+    group create-streamskeleton
     vro -> vcenter: create stream folder
         activate vcenter
     vro <- vcenter: folder created
-    |||
     deactivate vcenter
+    |||
 
     vro -> ad_mgmt: create AD objects
         activate ad_mgmt
@@ -33,9 +35,10 @@ vro_user -> vro : run create-environment
     |||
     
     vro -> vra: synchronise vRA directory
+        note right: brings vRA up-to-date with new AD objects
         activate vra
-        note right: brings vRA up-to-date with new objects in mgmt AD
-    vro <- vra:
+        ...wait for sync to complete...
+vro <- vra:
     deactivate vra
     |||
 
@@ -56,14 +59,20 @@ vro_user -> vro : run create-environment
     vro <- vra: 
     deactivate vra
     |||
-
+    end
+    |||
+    
+    group clone-octopustenant
     vro -> octopus: clone octopus tenant
     note right: create tenant for new stream based on template with all projects connected to all envrionments
     activate octopus
         octopus -> vro: tenant created
     deactivate octopus
     |||
+    end
+    |||
 
+    group create-networking
     vro -> nsx: create nsx network objects
         activate nsx
         nsx -> nsx: create vxlan for transit network
@@ -81,10 +90,71 @@ vro_user -> vro : run create-environment
     vro <- nsx: network objects created
     deactivate nsx
     
+    vro -> vra: configure vRA based on new NSX objects
+        activate vra
+        vra -> vra: invoke vRA data collection
+            note right: bring vRA up-to-date with new NSX objects
+            ...wait for data collection to complete...
+        vra -> vra: create network profile
+        vra -> vra: update reservation with networking information
+            note right: update reservation created earlier, associating network path (linking new stream network to new network profile)
+    vro <- vra: vRA configured based on new NSX objects
+    deactivate vra
+    |||
+    end
+    |||
 
+    group create-sqlstreamandnetworkprofile
+    vro -> sql_ipam: add new stream information to sql ipam db
+        activate sql_ipam
+        note right: rows in db created representing new stream and network profile - this allows ip allocations to be recorded against the stream when VMs, VIPs or SQL listeners are created
+    vro <- sql_ipam
+    deactivate sql_ipam
+    |||
+    end
+    |||
 
-    vro -> vro_user: environment created
+    group create-streamnsxsecuritytagandgroups
+    vro -> nsx: create NSX security tag and groups for DFW
+        activate nsx
+        nsx -> nsx: create security tag for stream
+            note right: e.g. ST-LOCATION-1011
+        nsx -> nsx: create security group for everything in the stream
+            note right: e.g. SG-LOCATION-1011
+        nsx -> nsx: create security group for everything NOT in the  stream
+            note right: e.g. SG-LOCATION-Not_1011
+        
+        nsx -> nsx: create DFW section and rule for stream
+            note right: e.g. rule blocks anything from ST-LOCATION-1011 to ST-LOCATION_Not_1011
+    vro <- nsx: NSX DFW objects created
+    deactivate nsx
+    |||
+    end
+    |||
+
+    group add-nsxdistributedfirewallrule
+    vro -> nsx: create NSX security tag and groups for DFW
+        activate nsx
+        nsx -> nsx: create security tag for stream
+            note right: e.g. ST-LOCATION-1011
+    deactivate nsx
+    |||
+    end
+    |||
+
+    group provision-blueprint
+    vro -> vra: provisions jumpstation for stream (deprecated)
+        activate vra
+        note right: if an active blueprint for a stream jumpstation is entitled to the business group, it used to be requested here
+        ...wait for machine to be provisioned...    
+    vro <- vra
+    deactivate vra
+    |||
+    end
+    |||
+
+vro -> vro_user: environment created
 deactivate vro
-note left: hello
+
 
 @enduml
