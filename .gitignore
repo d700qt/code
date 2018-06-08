@@ -22,3 +22,5 @@
 *.Vagrant
 *.box
 
+# Plantuml files
+*.puml
