@@ -24,3 +24,7 @@
 
 # Plantuml files
 *.puml
+
+# Virtual box files
+*.vdi
+
