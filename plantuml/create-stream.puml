@@ -1,0 +1,90 @@
+@startuml create-environment
+actor vro_user order 0
+participant vro order 10
+participant vcenter order 15
+participant vra order 20
+participant ad_mgmt order 25
+participant nsx order 30
+participant octopus order 40
+database sql_ipam order 50
+
+vro_user -> vro : run create-environment
+    activate vro
+    vro -> vcenter: create stream folder
+        activate vcenter
+    vro <- vcenter: folder created
+    |||
+    deactivate vcenter
+
+    vro -> ad_mgmt: create AD objects
+        activate ad_mgmt
+        ad_mgmt -> ad_mgmt: create stream OU
+        ad_mgmt -> ad_mgmt: create OUs inside stream OU
+        note right: computers, groups and service accounts OUs
+        ad_mgmt -> ad_mgmt: create groups inside groups OU
+        note right: create groups for managers, support users and users
+        ad_mgmt -> ad_mgmt: populate manager group
+        note right: add users/groups to manager group
+        ad_mgmt -> ad_mgmt: populate support users group
+        note right: add users/groups to support users group
+        ad_mgmt -> ad_mgmt: add vRA IaaS service account to managers group
+    vro <- ad_mgmt: AD objects created
+    deactivate ad_mgmt
+    |||
+    
+    vro -> vra: synchronise vRA directory
+        activate vra
+        note right: brings vRA up-to-date with new objects in mgmt AD
+    vro <- vra:
+    deactivate vra
+    |||
+
+    vro -> vra: create business group
+        activate vra
+    vro <- vra:
+    deactivate vra
+
+    vro -> vra: create reservation
+        note right: create vanilla reservation using template (made specific for the business group)
+        activate vra
+    vro <- vra:
+    deactivate vra
+
+    vro -> vra: create entitlement
+        note right: entitlement associated with business group and default services, catalog items, resource actions and resource extensions
+        activate vra
+    vro <- vra: 
+    deactivate vra
+    |||
+
+    vro -> octopus: clone octopus tenant
+    note right: create tenant for new stream based on template with all projects connected to all envrionments
+    activate octopus
+        octopus -> vro: tenant created
+    deactivate octopus
+    |||
+
+    vro -> nsx: create nsx network objects
+        activate nsx
+        nsx -> nsx: create vxlan for transit network
+            note right: logical switch used to connect stream ESG to logical router
+        nsx -> nsx: create stream edge
+            note right: based on template XML with runtime values inserted into placeholders, e.g. uplink and internal interfaces
+        nsx -> nsx: add BGP neighbours
+            note right: add BGP configuration to perimeter and stream edge
+        nsx -> nsx: add NAT rules to perimeter edge
+            note right: this is now now deprecated - we used to use NAT rules to allow RDP connections from workstations into the stream VMs. We now have global name resolution and direct connectivity to allow this
+        nsx -> nsx: create nsx logical router
+            note right: based on template XML with runtime values inserted into placeholders
+        nsx -> nsx: create stream network
+            note right: logical switch connecting logical router to in-stream infrastrucure and endpoints (VMs, LBs, SQL listeners)
+    vro <- nsx: network objects created
+    deactivate nsx
+    
+
+
+    vro -> vro_user: environment created
+deactivate vro
+note left: hello
+
+@enduml
