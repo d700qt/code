@@ -1,5 +1,8 @@
 {
-    "builders": [{
+  "variables": {
+    "product_key": ""
+  },
+  "builders": [{
     "type": "virtualbox-iso",
     "vboxmanage": [
       [ "modifyvm", "{{.Name}}", "--natpf1", "winrm,tcp,,55985,,5985" ],
