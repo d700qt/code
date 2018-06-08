@@ -1,12 +1,9 @@
 {
-  "variables": {
-    "product_key": ""
-  },
   "builders": [{
     "type": "virtualbox-iso",
     "vboxmanage": [
       [ "modifyvm", "{{.Name}}", "--natpf1", "winrm,tcp,,55985,,5985" ],
-      [ "modifyvm", "{{.Name}}", "--memory", "2048" ],
+      [ "modifyvm", "{{.Name}}", "--memory", "4096" ],
       [ "modifyvm", "{{.Name}}", "--cpus", "2" ]
     ],
     "guest_os_type": "Windows2016_64",
@@ -18,6 +15,7 @@
     "winrm_password": "vagrant",
     "winrm_port": "55985",
     "winrm_timeout": "5h",
+    "winrm_use_ntlm": "true",
     "guest_additions_mode": "disable",
     "shutdown_command": "C:/windows/system32/sysprep/sysprep.exe /generalize /oobe /unattend:C:/Windows/Panther/Unattend/unattend.xml /quiet /shutdown",
     "shutdown_timeout": "15m",
