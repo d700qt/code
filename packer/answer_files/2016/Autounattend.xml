@@ -60,7 +60,7 @@
                     <InstallFrom>
                         <MetaData wcm:action="add">
                             <Key>/IMAGE/NAME </Key>
-                            <Value>Windows Server 2016 SERVERDATACENTERCORE</Value>
+                            <Value>Windows Server 2016 SERVERDATACENTER</Value>
                         </MetaData>
                     </InstallFrom>
                     <InstallTo>
@@ -70,7 +70,7 @@
                 </OSImage>
             </ImageInstall>
             <UserData>
-                 <ProductKey>
+                <ProductKey>
                     <Key>???</Key>
                     <WillShowUI>OnError</WillShowUI>
                 </ProductKey>
