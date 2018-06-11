@@ -16,7 +16,7 @@ Vagrant.configure(2) do |config|
     config.vm.communicator = "winrm"
     config.vm.boot_timeout = 600
     config.vm.graceful_halt_timeout = 600
-    config.vm.box = "windows-server-2016"
+    config.vm.box = "windows-server-2016-core"
     config.vm.hostname = "AdesVM"
 
     # Disable automatic box update checking. If you disable this, then
@@ -29,7 +29,7 @@ Vagrant.configure(2) do |config|
     # accessing "localhost:8080" will access port 80 on the guest machine.
     # NOTE: This will enable public access to the opened port
     config.vm.network "forwarded_port", guest: 3389, host: 33389
-    config.vm.network "forwarded_port", guest: 80, host: 8080
+    config.vm.network "forwarded_port", guest: 80, host: 8081
     config.vm.network "forwarded_port", guest: 5985, host: 55985, id: "winrm", auto_correct: "true"
 
     # Create a forwarded port mapping which allows access to a specific port
@@ -46,8 +46,8 @@ Vagrant.configure(2) do |config|
     # your network.
     # config.vm.network "public_network"
 
-    config.winrm.username="administrator"
-    config.winrm.password="Genesis1:1"
+    config.winrm.username="vagrant"
+    config.winrm.password="vagrant"
     # Share an additional folder to the guest VM. The first argument is
     # the path on the host to the actual folder. The second argument is
     # the path on the guest to mount the folder. And the optional third
@@ -61,7 +61,7 @@ Vagrant.configure(2) do |config|
   config.vm.provider "virtualbox" do |vb|
     # Display the VirtualBox GUI when booting the machine
     vb.gui = true
-    vb.name = "Windows-server-2016"
+    vb.name = "Windows-server-2016-core"
         
     # Customize the amount   config.vm.network "forwarded_port", guest: 3389, host: 3389
     #memory on the VM:
@@ -75,9 +75,9 @@ Vagrant.configure(2) do |config|
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
   config.vm.provision "shell", inline: <<-SHELL
-    Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-    choco feature enable -n allowGlobalConfirmation
+    #Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+    #choco feature enable -n allowGlobalConfirmation
     #choco install puppet-agent
-    add-windowsfeature -name web-server
+    #add-windowsfeature -name web-server
   SHELL
 end
