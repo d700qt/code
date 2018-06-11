@@ -19,7 +19,7 @@
 *.zip
 
 # Vagrant files
-*.Vagrant
+**/.vagrant/*
 *.box
 
 # Plantuml files
