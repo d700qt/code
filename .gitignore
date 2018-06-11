@@ -27,4 +27,5 @@
 
 # Packer files
 **/output-virtualbox-iso/*
+packerlog.txt
 
