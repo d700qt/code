@@ -17,7 +17,7 @@
       "winrm_username": "vagrant",
       "winrm_password": "vagrant",
       "winrm_timeout": "12h",
-      "shutdown_command": "C:/Windows/Panther/Unattend/packer_shutdown.bat",
+      "shutdown_command": "C:/windows/system32/sysprep/sysprep.exe /generalize /oobe /unattend:C:/Windows/Panther/Unattend/unattend.xml /quiet /shutdown",
       "shutdown_timeout": "15m",
       "floppy_files": [
         "answer_files/2016/Autounattend.xml",
@@ -32,13 +32,8 @@
       "output": "windows2016min-{{.Provider}}.box",
       "vagrantfile_template": "vagrantfile-windows.template"
     }
-  ],
-  "variables": {
-    "guest_additions_mode": "disable",
-    "headless": "false",
-    "iso_checksum": "7ADC82E00F1367B43897BB969A75BBF96D46F588",
-    "iso_url": "c:\\isos\\en_windows_server_2016_updated_feb_2018_x64_dvd_11636692.iso"
-  }
+  ]
+  
 }
 
 
