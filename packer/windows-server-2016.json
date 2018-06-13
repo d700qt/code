@@ -28,7 +28,7 @@
   "post-processors": [
     {
       "type": "vagrant",
-      "keep_input_artifact": true,
+      "keep_input_artifact": false,
       "output": "windows2016min-{{.Provider}}.box",
       "vagrantfile_template": "vagrantfile-windows.template"
     }
