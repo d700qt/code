@@ -82,5 +82,6 @@ Vagrant.configure(2) do |config|
     #choco feature enable -n allowGlobalConfirmation
     #choco install puppet-agent
     add-windowsfeature -name web-server
+    set-content -Value "<html><head></head><body><h1>Its me!</h1></body></html>" -Path "c:\\inetpub\\wwwroot\\index.html"
   SHELL
 end
