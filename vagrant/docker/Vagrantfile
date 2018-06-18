@@ -1,6 +1,9 @@
 Vagrant.configure("2") do |config|
+    config.vm.synced_folder ".", "/vagrant", disabled: true
+
     config.vm.provider "docker" do |d|
-      d.image = "microsoft/windowsservercore:1803"
+      d.image = "microsoft/windowsservercore"
       d.force_host_vm = true
     end
+
 end
