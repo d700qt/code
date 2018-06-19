@@ -6,11 +6,9 @@ Vagrant.configure("2") do |config|
       d.build_args = ["-t=iis:v1"]
       d.create_args = ["-i"]
       d.ports = ["80:80"]
-      #.run "weetman\iis"
-      #d.force_host_vm = false
     end
 
-    
+
 
 end
 
