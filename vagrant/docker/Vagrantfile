@@ -1,5 +1,5 @@
 Vagrant.configure("2") do |config|
-    config.vm.synced_folder ".", "/vagrant", disabled: true
+    config.vm.synced_folder ".", "c:\\testing", disabled: true
 
     config.vm.provider "docker" do |d|
       d.build_dir = "."
@@ -7,9 +7,4 @@ Vagrant.configure("2") do |config|
       d.create_args = ["-i"]
       d.ports = ["80:80"]
     end
-
-
-
 end
-
-
