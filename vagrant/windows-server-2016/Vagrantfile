@@ -29,7 +29,7 @@ Vagrant.configure(2) do |config|
     db.vm.hostname = "db"
     db.vm.network "forwarded_port", guest: 3389, host: 3390, id: 'rdp', auto_correct: true
     db.vm.network "forwarded_port", guest: 5985, host: 5590, id: "winrm", auto_correct: "true"
-    db.vm.network "forwarded_port", guest: 80, host: 8080
+    db.vm.network "forwarded_port", guest: 80, host: 8090
     db.vm.network "private_network", ip: "192.168.10.10"
     db.winrm.username="vagrant"
     db.winrm.password="vagrant"
@@ -48,7 +48,7 @@ Vagrant.configure(2) do |config|
     app.vm.hostname = "app"
     app.vm.network "forwarded_port", guest: 3389, host: 3391, id: 'rdp', auto_correct: true
     app.vm.network "forwarded_port", guest: 5985, host: 5591, id: "winrm", auto_correct: "true"
-    app.vm.network "forwarded_port", guest: 80, host: 8081
+    app.vm.network "forwarded_port", guest: 80, host: 8091
     app.vm.network "private_network", ip: "192.168.11.10"
     app.winrm.username="vagrant"
     app.winrm.password="vagrant"
