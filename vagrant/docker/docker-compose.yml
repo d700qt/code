@@ -1,0 +1,26 @@
+version: "3"
+services:
+    app:
+        build:
+            context: ./app
+            dockerfile: Dockerfile
+        networks:
+            - app
+        depends_on:
+            - db
+    db:
+        build:
+            context: ./db
+            dockerfile: Dockerfile
+        networks:
+            - db
+
+networks:
+    app:
+        external:
+            name: nat
+    db:
+        external:
+            name: nat
+    
+            
