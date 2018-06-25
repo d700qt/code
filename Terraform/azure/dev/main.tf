@@ -136,6 +136,7 @@ resource "null_resource" "bootstrap" {
           choco install vagrant
           choco install packer
           choco install googlechrome
+          choco install docker-compose
       }
 
       # need to create new ps session to workaround PowerShell bug regarding copy-item over a remote winrm session to an Azure VM!
