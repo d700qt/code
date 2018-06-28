@@ -5,10 +5,11 @@
 # configures the configuration version (we support older styles for
 # backwards compatibility). Please don't change it unless you know what
 # you're doing.
+
 Vagrant.configure(2) do |config|
 
   # Share an additional folder to the guest VM
-  config.vm.synced_folder ".", "/vagrant", type: "smb"
+  #config.vm.synced_folder ".", "/vagrant", type: "smb"
 
   config.vm.provider "virtualbox" do |vb|
     # Display the VirtualBox GUI when booting the machine
@@ -111,13 +112,15 @@ Vagrant.configure(2) do |config|
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
   config.vm.provision "shell", inline: <<-SHELL
-    #Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-    #choco feature enable -n allowGlobalConfirmation
+    Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+    choco feature enable -n allowGlobalConfirmation
+    choco install sql-server-express 
     #choco install puppet-agent
     #add-windowsfeature -name web-server
     #set-content -Value "<html><head></head><body><h1>Its me!</h1></body></html>" -Path "c:\\inetpub\\wwwroot\\index.html"
-    #add-windowsfeature -name telnet-client
-    #netsh advfirewall firewall add rule name="ICMP Allow incoming V4 echo request" protocol="icmpv4:8,any" dir=in action=allow
-    #netsh advfirewall firewall add rule name="Octopus Tentacle port" protocol="tcp" localport=10933 dir=in action=allow    
+    add-windowsfeature -name telnet-client
+    netsh advfirewall firewall add rule name="ICMP Allow incoming V4 echo request" protocol="icmpv4:8,any" dir=in action=allow
+    netsh advfirewall firewall add rule name="Octopus Tentacle port" protocol="tcp" localport=10933 dir=in action=allow
+    netsh advfirewall firewall add rule name="SQL Server" protocol="tcp" localport=1433 dir=in action=allow
   SHELL
 end
