@@ -1,0 +1,63 @@
+#
+# Create container registry
+#
+# create resource group
+az group create --name k8s  --location eastus
+
+# create azure container registry
+az acr create --resource-group k8s --name adeweetmanacr --sku Basic
+
+# log onto the container registry
+az acr login --name adeweetmanacr
+
+# get login server name
+az acr list --resource-group k8s --query "[].{acrLoginServer:loginServer}" --output table
+    # returned adeweetmanacr.azurecr.io
+
+# now tag docker images with the loginServer of the container registry. Also, add :v1 to the end of the image name
+docker tag azure-vote-front:latest adeweetmanacr.azurecr.io/azure-vote-front:v1
+
+# push image to contrainer registry
+docker push adeweetmanacr.azurecr.io/azure-vote-front:v1
+
+# list images in the container registry
+az acr repository list --name adeweetmanacr --output table
+
+# show tags
+az acr repository show-tags --name adeweetmanacr --repository azure-vote-front --output table
+
+# Set up access to container registry
+# To allow an AKS cluster to interact with other Azure resources, an Azure Active Directory service principal is used.
+# This service principal can be automatically created by the Azure CLI or portal, or you can pre-create one and assign additional permissions.
+# In this tutorial, you create a service principal, grant access to the Azure Container Registry (ACR) instance created in the previous tutorial,
+# then create an AKS cluster.
+# Create a service principal with az ad sp create-for-rbac. The --skip-assignment parameter limits any additional permissions from being assigned.
+az ad sp create-for-rbac --skip-assignment
+# <removed>
+
+
+# grant service principle access to container registry
+az acr show --name adeweetmanacr --resource-group k8s --query "id" --output tsv
+az role assignment create --assignee "<removed>" --role Reader --scope "<removed>"
+
+#
+# Create kubernetes cluster
+#
+
+az aks create \
+    --name adeweetmank8s \
+    --resource-group k8s \
+    --node-count 1 \
+    --generate-ssh-keys \
+    --service-principal "<removed>" \
+    --client-secret "<removed>"
+
+# <removed>
+
+# Install kubectl
+sudo az aks install-cli
+
+# Connect using kubectl
+# To configure kubectl to connect to your Kubernetes cluster, use az aks get-credentials.
+# The following example gets credentials for the AKS cluster name myAKSCluster in the myResourceGroup:
+az aks get-credentials --name adeweetmank8s --resource-group k8s
