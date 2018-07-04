@@ -8,6 +8,6 @@ metadata:
 spec:
   containers:
   - name: hello-kubernetes
-    image: adeweetmanacr.azurecr.io/nginx
+    image: adeweetmanacr.azurecr.io/nginx:v1
     ports:
     - containerPort:8080

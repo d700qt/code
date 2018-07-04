@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-k8s-service
+  labels:
+    app: hello
+spec:
+  type: NodePort # 3 types: ClusterIP (stable internal cluster IP), NodePort (exposes app outside of cluster using cluster-wide port for clusterIP), LoadBalancer (integrates NodePort with cloud-provider load balancers)
+  ports:
+  - port: 8080
+    nodePort: 30001
+    protocol: TCP
+  selector:
+    app: hello
