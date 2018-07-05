@@ -76,6 +76,18 @@ resource "azurerm_network_security_group" "nsg_terraform" {
     destination_address_prefix = "*"
   }
 
+  security_rule {
+    name                       = "SSH"
+    priority                   = 104
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "22"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+
   tags {
     environment = "global"
   }
@@ -102,6 +114,19 @@ resource "azurerm_public_ip" "pip_ci1" {
   public_ip_address_allocation = "Static"
   idle_timeout_in_minutes      = 30
   domain_name_label            = "adeweetman-ci1"
+
+  tags {
+    environment = "global"
+  }
+}
+
+resource "azurerm_public_ip" "pip_lnx1" {
+  name                         = "pip_lnx1"
+  location                     = "${azurerm_resource_group.rg_terraform.location}"
+  resource_group_name          = "${azurerm_resource_group.rg_terraform.name}"
+  public_ip_address_allocation = "Static"
+  idle_timeout_in_minutes      = 30
+  domain_name_label            = "adeweetman-lnx1"
 
   tags {
     environment = "global"
@@ -177,4 +202,12 @@ output "win2_public_ip_address" {
 
 output "win2_public_fqdn" {
   value = "${azurerm_public_ip.pip_win2.domain_name_label}.${azurerm_resource_group.rg_terraform.location}.cloudapp.azure.com"
+}
+
+output "lnx1_public_ip_address" {
+  value = "${azurerm_public_ip.pip_lnx1.ip_address}"
+}
+
+output "lnx1_public_fqdn" {
+  value = "${azurerm_public_ip.pip_lnx1.domain_name_label}.${azurerm_resource_group.rg_terraform.location}.cloudapp.azure.com"
 }
